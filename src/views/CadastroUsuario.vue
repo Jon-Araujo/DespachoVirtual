@@ -77,7 +77,7 @@ export default defineComponent({
                         "resposta": `${this.resposta.toLowerCase()}`
                     });
 
-                await(await fetch('http://localhost:3000/usuarios', {
+                await(await fetch('https://api-bd-missoes.vercel.app/usuarios', {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json"

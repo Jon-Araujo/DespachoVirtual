@@ -29,7 +29,7 @@ export default defineComponent({
     },
     methods: {
         async recuperaUsuarios() {
-            var listaUsuarios = await (await fetch("http://localhost:3000/usuarios", {method: 'GET'})).json();
+            var listaUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", {method: 'GET'})).json();
             this.listaUsuarios = listaUsuarios;
             return this.listaUsuarios;
         },

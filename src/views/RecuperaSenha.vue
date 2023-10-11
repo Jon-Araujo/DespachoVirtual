@@ -57,7 +57,7 @@ export default defineComponent({
     emits: ['mostrarSenha'],
     methods: {
         async recuperaUsuarios() {
-            const lista = await (await fetch("http://localhost:3000/usuarios", {method: "GET"})).json();
+            const lista = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", {method: "GET"})).json();
             this.listaUsuarios = lista;
             return this.listaUsuarios;
         },

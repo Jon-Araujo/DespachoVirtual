@@ -72,7 +72,7 @@ export default defineComponent({
     },
     methods: {
         async recuperaRespondidas() {
-            const listaRespondidas = await (await fetch("http://localhost:3000/historico", { method: 'GET' })).json();
+            const listaRespondidas = await (await fetch("https://api-bd-missoes.vercel.app/historico", { method: 'GET' })).json();
             this.missoesRespondidas = listaRespondidas;
             return this.missoesRespondidas;
         },
@@ -89,7 +89,7 @@ export default defineComponent({
             enviadas.checked = false;
         },
         async retornaUsuarios() {
-            const recebeUsuarios = await (await fetch("http://localhost:3000/usuarios", { method: 'GET' })).json();
+            const recebeUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", { method: 'GET' })).json();
             this.listaUsuarios = recebeUsuarios;
             return this.listaUsuarios;
         },

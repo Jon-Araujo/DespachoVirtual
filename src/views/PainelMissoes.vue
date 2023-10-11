@@ -100,12 +100,12 @@ export default defineComponent({
             this.prazo = prazo;
         },
         async recebeMissoes() {
-            var recebeLista = await (await fetch("http://localhost:3000/missoes", { method: 'GET' })).json();
+            var recebeLista = await (await fetch("https://api-bd-missoes.vercel.app/missoes", { method: 'GET' })).json();
             this.listaMissoes = recebeLista;
             return this.listaMissoes;
         },
         async retornaDados() {
-            var recebeUsuarios = await (await fetch("http://localhost:3000/usuarios", { method: 'GET' })).json();
+            var recebeUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", { method: 'GET' })).json();
             const id = sessionStorage.getItem('id');
 
             for (let i = 0; i < recebeUsuarios.length; i++) {

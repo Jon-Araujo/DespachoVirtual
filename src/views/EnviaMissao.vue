@@ -77,7 +77,7 @@ export default defineComponent({
                     "patenteDestinatario": `${patenteDestinatario}`
                 });
                 
-                await (await fetch("http://localhost:3000/missoes", { 
+                await (await fetch("https://api-bd-missoes.vercel.app/missoes", { 
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json"
@@ -97,17 +97,17 @@ export default defineComponent({
             this.prazo = "";
         },
         async recuperaUsuarios() {
-            var listaUsuarios = await (await fetch("http://localhost:3000/usuarios", { method: 'GET' })).json();
+            var listaUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", { method: 'GET' })).json();
             this.usuarios = listaUsuarios;
             return this.usuarios;
         },
         async recuperaMissoes() {
-            var missoes = await (await fetch("http://localhost:3000/missoes", { method: 'GET' })).json();
+            var missoes = await (await fetch("https://api-bd-missoes.vercel.app/missoes", { method: 'GET' })).json();
             this.listaMissoes = missoes;
             return this.listaMissoes;
         },
         async retornaDados() {
-            var recebeUsuarios = await (await fetch("http://localhost:3000/usuarios", { method: 'GET' })).json();
+            var recebeUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", { method: 'GET' })).json();
             const id = sessionStorage.getItem('id');
 
             for (let i = 0; i < recebeUsuarios.length; i++) {
