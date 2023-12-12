@@ -6,7 +6,7 @@
             <input type="text" id="usuario" v-model="usuario">
             <label for="senha"><span class="material-symbols-outlined">password</span>Senha:</label>
             <input type="password" id="senha" v-model="senha">
-            <input id="valida" type="submit" @click="validaLogin">
+            <input id="valida" type="submit" value="Entrar" @click="validaLogin">
         </form>
         <div>
             <router-link class="btn-rotas" to="/recuperaSenha">Esqueci minha senha</router-link>
@@ -29,7 +29,7 @@ export default defineComponent({
     },
     methods: {
         async recuperaUsuarios() {
-            var listaUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", {method: 'GET'})).json();
+            var listaUsuarios = await (await fetch("http://10.1.196.90:3000/users", {method: 'GET'})).json();
             this.listaUsuarios = listaUsuarios;
             return this.listaUsuarios;
         },
@@ -40,7 +40,7 @@ export default defineComponent({
                     this.$router.push('/painelMissoes');
                     // sessionStorage.setItem("militar", this.usuario);
                     // sessionStorage.setItem("patente", this.listaUsuarios[i].patente);
-                    sessionStorage.setItem("id", this.listaUsuarios[i]._id);
+                    sessionStorage.setItem("id", this.listaUsuarios[i].id);
                     contador = 1;
                 }
             }

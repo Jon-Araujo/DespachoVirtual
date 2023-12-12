@@ -4,11 +4,12 @@
         <BotaoLogout />
     </nav>
     <div v-if="contador == true">
-        <h3>A senha do(a) senhor(a) é:<p>{{ senha }}</p></h3>
+        <h3>A senha do(a) senhor(a) é:<p>{{ senha }}</p>
+        </h3>
     </div>
     <section>
         <label for="email"><span class="material-symbols-outlined">mail</span>Informe seu email cadastrado:</label>
-        <input type="email" id="email" v-model="email">
+        <input type="email" id="email" v-model="email" placeholder="Insira seu email" v-on:blur="recuperaPergunta">
 
         <label><span class="material-symbols-outlined">military_tech</span>Selecione seu Posto | Graduação:</label>
         <select id="select-pg" v-model="patente">
@@ -27,8 +28,9 @@
         <label for="nome"><span class="material-symbols-outlined">person</span>Informe seu nome:</label>
         <input type="text" id="nome" placeholder="Insira seu nome" v-model="nome">
 
-        <label for="palavraChave"><span class="material-symbols-outlined">person_raised_hand</span>Informe sua resposta:</label>
-        <input type="text" id="palavraChave" placeholder="xxxxxxx" v-model="resposta">
+        <label for="palavraChave"><span class="material-symbols-outlined">person_raised_hand</span>Informe sua
+            resposta:</label>
+        <input type="text" id="palavraChave" :placeholder="pergunta" v-model="resposta">
 
         <button @click="alteraSenha">Recuperar a senha</button>
     </section>
@@ -49,6 +51,7 @@ export default defineComponent({
             patente: "",
             nome: "",
             resposta: "",
+            pergunta: "",
             listaUsuarios: [] as any[],
             contador: false,
             senha: ""
@@ -57,22 +60,30 @@ export default defineComponent({
     emits: ['mostrarSenha'],
     methods: {
         async recuperaUsuarios() {
-            const lista = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", {method: "GET"})).json();
+            const lista = await (await fetch("http://10.1.196.90:3000/users", { method: "GET" })).json();
             this.listaUsuarios = lista;
             return this.listaUsuarios;
         },
         alteraSenha() {
             for (let i = 0; i < this.listaUsuarios.length; i++) {
-                if(this.nome.toLowerCase() === this.listaUsuarios[i].nome) {
-                    if(this.email === this.listaUsuarios[i].email && this.patente === this.listaUsuarios[i].patente && this.resposta === this.listaUsuarios[i].resposta) {
-                        this.senha = this.listaUsuarios[i].senha; 
+                if (this.nome.toLowerCase() === this.listaUsuarios[i].nome) {
+                    if (this.email === this.listaUsuarios[i].email && this.patente === this.listaUsuarios[i].patente && this.resposta === this.listaUsuarios[i].resposta) {
+                        this.senha = this.listaUsuarios[i].senha;
                         this.$emit('mostrarSenha', this.senha);
                         this.contador = !this.contador;
                     } else {
                         alert("As informações fornecidas não estão corretas.");
-                    } 
+                    }
                 }
-            } 
+            }
+        },
+        recuperaPergunta() {
+            for (let i = 0; i < this.listaUsuarios.length; i++) {
+                if (this.email == this.listaUsuarios[i].email) {
+                    this.pergunta = this.listaUsuarios[i].pergunta;
+                }
+            }
+            return this.pergunta;
         }
     },
     created() {
@@ -112,8 +123,10 @@ div {
     background-color: $cor-secundaria;
     color: #FFFFFF;
     text-align: center;
+
     h3 {
-        margin: 1rem 0 0 0;
+        margin: 0.5rem 0 0 0;
+
         p {
             background-color: #FFFFFF;
             width: auto;
@@ -123,6 +136,7 @@ div {
         }
     }
 }
+
 section {
     border-radius: 8px;
     border: 2px solid $cor-quaternaria;
@@ -143,6 +157,7 @@ section {
         color: white;
         display: flex;
         align-items: center;
+
         span {
             margin-right: 0.5rem;
         }

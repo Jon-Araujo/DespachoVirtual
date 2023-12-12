@@ -13,7 +13,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+  html {
+    height: 100%;
+    width: 100%;
+  }
   body {
+    height: 100%;
+    width: 100%;
     background-image: url('../public/25blog.png');
     background-repeat: no-repeat;
     background-size: cover;

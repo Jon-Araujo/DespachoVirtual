@@ -34,20 +34,19 @@ export default defineComponent({
     },
     methods: {
         async recuperaMissoes() {
-            const listaMissoes = await (await fetch("http://localhost:3000/missoes", { method: 'GET' })).json();
+            const listaMissoes = await (await fetch("http://10.1.196.90:3000/missions", { method: 'GET' })).json();
             this.listaMissoes = listaMissoes;
 
             for (let i = 0; i < listaMissoes.length; i++) {
-                if (listaMissoes[i].remetente === this.militarEnviou) {
-                    this.patenteRemetente = listaMissoes[i].patenteRemetente;
+                if (listaMissoes[i].remetente == this.militarEnviou) {
+                    this.patenteRemetente = listaMissoes[i].patenteremetente;
                 } 
                 
-                if (listaMissoes[i].destinatario === this.militarRespondeu) {
-                    this.patenteDestinatario = listaMissoes[i]. patenteDestinatario;
+                if (listaMissoes[i].destinatario == this.militarRespondeu) {
+                    this.patenteDestinatario = listaMissoes[i].patentedestinatario;
                 }
             }
-            console.log(this.patenteRemetente)
-            return this.listaMissoes, this.patenteRemetente
+            return this.listaMissoes, this.patenteRemetente, this.patenteDestinatario
         },
         async enviarMissao() {
             const dados = JSON.stringify({
@@ -57,11 +56,11 @@ export default defineComponent({
                 descricao: this.descricao,
                 prazo: this.prazo,
                 solucao: this.solucao,
-                patenteRemetente: this.patenteRemetente,
-                patenteDestinatario: this.patenteDestinatario
+                patenteremetente: this.patenteRemetente,
+                patentedestinatario: this.patenteDestinatario
             });
 
-            await (await fetch("http://localhost:3000/historico", {
+            await (await fetch("http://10.1.196.90:3000/historical", {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json"
@@ -71,15 +70,15 @@ export default defineComponent({
 
             var id = '';
             for (let i = 0; i < this.listaMissoes.length; i++) {
-                if (this.listaMissoes[i].remetente === this.militarEnviou &&
-                    this.listaMissoes[i].destinatario === this.militarRespondeu &&
-                    this.listaMissoes[i].titulo === this.titulo &&
-                    this.listaMissoes[i].descricao === this.descricao &&
-                    this.listaMissoes[i].prazo === this.prazo) {
-                    id = this.listaMissoes[i]._id;
+                if (this.listaMissoes[i].remetente == this.militarEnviou &&
+                    this.listaMissoes[i].destinatario == this.militarRespondeu &&
+                    this.listaMissoes[i].titulo == this.titulo &&
+                    this.listaMissoes[i].descricao == this.descricao &&
+                    this.listaMissoes[i].prazo == this.prazo) {
+                    id = this.listaMissoes[i].id;
                 }
             }
-            await (await fetch(`http://localhost:3000/missoes/${id}`, { method: 'DELETE' })).json();
+            await (await fetch(`http://10.1.196.90:3000/missions/${id}`, { method: 'DELETE' })).json();
 
             this.$emit('trocaEstadoPopup');
             window.location.reload();

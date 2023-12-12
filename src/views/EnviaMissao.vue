@@ -6,9 +6,37 @@
     </div>
     <form>
         <label for="militar">Selecione o militar:</label>
-        <select id="militar" v-model="militar">
-            <option v-for="militares, index in usuarios" :key="index">{{ militares.patente + " " +
-                militares.nome[0].toUpperCase() + militares.nome.slice(1) }}</option>
+        <select id="militar" v-model="militar" @click="ordenaPatente">
+            <option v-for="militar in coroneis" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in tenCoroneis" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in majores" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in capitaes" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in priTenentes" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in segTenentes" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in subTenentes" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in priSargentos" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in segSargentos" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
+            <option v-for="militar in terSargentos" :key="militar.id">
+                {{ militar.patente + " " + militar.nome[0].toUpperCase() + militar.nome.slice(1) }}
+            </option>
         </select>
 
         <label for="tituloMissao">Título da Missão:</label>
@@ -43,11 +71,36 @@ export default defineComponent({
             prazo: '',
             autor: '',
             usuarios: [] as any[],
-            listaMissoes: [] as any[]
+            listaMissoes: [] as any[],
+            coroneis: [] as any[],
+            tenCoroneis: [] as any[],
+            majores: [] as any[],
+            capitaes: [] as any[],
+            priTenentes: [] as any[],
+            segTenentes: [] as any[],
+            subTenentes: [] as any[],
+            priSargentos: [] as any[],
+            segSargentos: [] as any[],
+            terSargentos: [] as any[]
         }
-
     },
     methods: {
+        ordenaPatente() {
+            this.coroneis = this.usuarios.filter(militar => militar.patente == 'Coronel');
+            this.tenCoroneis = this.usuarios.filter(militar => militar.patente == 'Ten-Coronel');
+            this.majores = this.usuarios.filter(militar => militar.patente == 'Major');
+            this.capitaes = this.usuarios.filter(militar => militar.patente == 'Capitão');
+            this.priTenentes = this.usuarios.filter(militar => militar.patente == '1º Tenente');
+            this.segTenentes = this.usuarios.filter(militar => militar.patente == '2º Tenente');
+            this.subTenentes = this.usuarios.filter(militar => militar.patente == 'Sub Tenente');
+            this.priSargentos = this.usuarios.filter(militar => militar.patente == '1º Sargento');
+            this.segSargentos = this.usuarios.filter(militar => militar.patente == '2º Sargento');
+            this.terSargentos = this.usuarios.filter(militar => militar.patente == '3º Sargento');
+
+            return this.coroneis, this.tenCoroneis, this.majores, this.capitaes, this.priTenentes, this.segTenentes,
+                this.subTenentes, this.priSargentos, this.segSargentos, this.terSargentos;
+
+        },
         async enviarMissao() {
             try {
                 var nomeMilitar = this.militar.split(' ');
@@ -60,9 +113,9 @@ export default defineComponent({
                 var patenteDestinatario = '';
 
                 for (let i = 0; i < this.usuarios.length; i++) {
-                    if (this.usuarios[i].nome === this.autor) {
+                    if (this.usuarios[i].nome == this.autor) {
                         patenteRemetente = this.usuarios[i].patente;
-                    } else if (this.usuarios[i].nome === destinatario) {
+                    } else if (this.usuarios[i].nome == destinatario) {
                         patenteDestinatario = this.usuarios[i].patente;
                     }
                 }
@@ -73,21 +126,21 @@ export default defineComponent({
                     "titulo": `${this.titulo}`,
                     "descricao": `${this.descricao}`,
                     "prazo": `${this.prazo}`,
-                    "patenteRemetente": `${patenteRemetente}`,
-                    "patenteDestinatario": `${patenteDestinatario}`
+                    "patenteremetente": `${patenteRemetente}`,
+                    "patentedestinatario": `${patenteDestinatario}`
                 });
-                
-                await (await fetch("https://api-bd-missoes.vercel.app/missoes", { 
+
+                await (await fetch("http://10.1.196.90:3000/missions", {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: dados
                 })).json();
-                
+
                 alert('Operação concluída com sucesso');
-                
-            } catch(error) {
+
+            } catch (error) {
                 alert('Ocorreu o erro:' + error);
             }
 
@@ -97,21 +150,21 @@ export default defineComponent({
             this.prazo = "";
         },
         async recuperaUsuarios() {
-            var listaUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", { method: 'GET' })).json();
+            var listaUsuarios = await (await fetch("http://10.1.196.90:3000/users", { method: 'GET' })).json();
             this.usuarios = listaUsuarios;
             return this.usuarios;
         },
         async recuperaMissoes() {
-            var missoes = await (await fetch("https://api-bd-missoes.vercel.app/missoes", { method: 'GET' })).json();
+            var missoes = await (await fetch("http://10.1.196.90:3000/missions", { method: 'GET' })).json();
             this.listaMissoes = missoes;
             return this.listaMissoes;
         },
         async retornaDados() {
-            var recebeUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", { method: 'GET' })).json();
+            var recebeUsuarios = await (await fetch("http://10.1.196.90:3000/users", { method: 'GET' })).json();
             const id = sessionStorage.getItem('id');
 
             for (let i = 0; i < recebeUsuarios.length; i++) {
-                if (id === recebeUsuarios[i]._id) {
+                if (id == recebeUsuarios[i].id) {
                     this.autor = recebeUsuarios[i].nome;
                 }
             }

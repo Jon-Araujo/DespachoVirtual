@@ -6,7 +6,7 @@
 
     <form>
         <label for="patente"><span class="material-symbols-outlined">military_tech</span>Posto | Graduação:</label>
-        <select id="patente" v-model="patente">
+        <select id="patente" v-model="patente" required>
             <option>Coronel</option>
             <option>Ten-Coronel</option>
             <option>Major</option>
@@ -21,16 +21,17 @@
         </select>
 
         <label for="usuario"><span class="material-symbols-outlined">person</span>Usuário:</label>
-        <input v-model="usuario" id="usuario" type="text">
+        <input v-model="usuario" id="usuario" type="text" placeholder="Insira aqui seu nome" required>
 
         <label for="senha"><span class="material-symbols-outlined">password</span>Senha:</label>
-        <input v-model="senha" id="senha" type="password">
+        <input v-model="senha" id="senha" type="password" placeholder="Insira aqui sua senha" required>
 
-        <label for="email"><span class="material-symbols-outlined">mail</span>Informe seu email cadastrado:</label>
-        <input v-model="email" type="email" id="email">
+        <label for="email"><span class="material-symbols-outlined">mail</span>Email:</label>
+        <input v-model="email" type="email" id="email" placeholder="Insira aqui seu email" required>
 
-        <label for="pergunta"><span class="material-symbols-outlined">quick_phrases</span>Pergunta para eventual recuperação de senha:</label>
-        <select v-model="pergunta">
+        <label for="pergunta"><span class="material-symbols-outlined">quick_phrases</span>Pergunta para eventual recuperação
+            de senha:</label>
+        <select v-model="pergunta" required>
             <option>Nº de aluno | cadete?</option>
             <option>Nome do animal de estimação?</option>
             <option>Iniciais de um nome?</option>
@@ -40,7 +41,7 @@
         </select>
 
         <label><span class="material-symbols-outlined">person_raised_hand</span>Resposta:</label>
-        <input v-model="resposta" type="text">
+        <input v-model="resposta" type="text" placeholder="Insira aqui a resposta da pergunta acima" required>
 
         <input type="submit" value="Cadastrar" id="cadastra" @click="cadastraUsuario">
     </form>
@@ -59,7 +60,8 @@ export default defineComponent({
             senha: "",
             email: "",
             pergunta: "",
-            resposta: ""
+            resposta: "",
+            listaUsuarios: [] as any[]
         }
     },
     components: {
@@ -69,29 +71,50 @@ export default defineComponent({
         async cadastraUsuario() {
             try {
                 const dados = JSON.stringify({
-                        "patente": `${this.patente}`,
-                        "nome": `${this.usuario.toLowerCase()}`,
-                        "senha": `${this.senha}`,
-                        "email": `${this.email.toLowerCase()}`,
-                        "pergunta": `${this.pergunta}`,
-                        "resposta": `${this.resposta.toLowerCase()}`
-                    });
+                    "patente": `${this.patente}`,
+                    "nome": `${this.usuario.toLowerCase()}`,
+                    "senha": `${this.senha}`,
+                    "email": `${this.email.toLowerCase()}`,
+                    "pergunta": `${this.pergunta}`,
+                    "resposta": `${this.resposta.toLowerCase()}`
+                });
 
-                await(await fetch('https://api-bd-missoes.vercel.app/usuarios', {
-                    method: 'POST',
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: dados
-                })).json();
+                let contador = 0;
 
-                alert("Usuário cadastrado com sucesso!");
-                this.$router.push('/');
-            } catch(error) {
+                for (let i = 0; i < this.listaUsuarios.length; i++) {
+                    if (this.email == this.listaUsuarios[i].email) {
+                        contador = 1;
+                        alert('Usuário já existe.');
+                    }
+                }
+
+                if (contador === 0) {
+                    await (await fetch('http://10.1.196.90:3000/users', {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: dados
+                    })).json();
+
+                    alert("Usuário cadastrado com sucesso!");
+
+                    this.$router.push('/');
+                }
+
+            } catch (error) {
                 alert("Ocorreu um erro, tente novamente!" + error);
             }
+        },
+        async recuperaUsuarios() {
+            const listaUsuarios = await (await fetch('http://10.1.196.90:3000/users', { method: 'GET' })).json();
+            this.listaUsuarios = listaUsuarios;
+            return this.listaUsuarios;
         }
-    }
+    },
+    created() {
+        this.recuperaUsuarios();
+    },
 })
 </script>
 
@@ -178,6 +201,7 @@ form {
         font-size: 1rem;
         cursor: pointer;
         transition: all 0.5s;
+
         &:hover {
             transform: scale(1.1);
             background-color: $cor-terciaria;

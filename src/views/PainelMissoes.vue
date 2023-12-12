@@ -7,29 +7,33 @@
             v-bind="{ militarEnviou: militarEnviou, militarRespondeu: militarRespondeu, titulo: titulo, descricao: descricao, prazo: prazo }" />
     </nav>
     <h3>{{ msgSaudacao + ", " + patente + " " + inicial + nomeMilitar?.slice(1) + "!" }}</h3>
-    
-    <table>
-        <thead>
-            <tr>
-                <th>Objeto da Missão</th>
-                <th class="colunaPrazo">Prazo</th>
-                <th>Autor</th>
-                <!-- <th class="colunaAnexo">Anexo</th> -->
-                <th class="colunaFeito"><span class="material-symbols-outlined">done_all</span></th>
-            </tr>
-        </thead>
-        <tbody v-for="missao, index in listaMissoes" :key="index">
-            <tr v-if="missao.destinatario == nomeMilitar">
-                <th>{{ missao.titulo.toUpperCase() }} <br> {{ missao.descricao }}</th>
-                <th class="colunaPrazo">{{ missao.prazo.split('-').reverse().join('/') }}</th>
-                <th>{{ missao.patenteRemetente + " " + missao.remetente[0].toUpperCase() + missao.remetente.slice(1) }}</th>
-                <!-- <th class="colunaAnexo"><button @click="abreAnexo"><span class="material-symbols-outlined">attach_file</span></button></th> -->
-                <th class="colunaFeito" @click="manipulaDados(missao.remetente, missao.destinatario, missao.titulo, missao.descricao, missao.prazo)">
-                    <button><span class="material-symbols-outlined">done_outline</span></button>
-                </th>
-            </tr>
-        </tbody>
-    </table>
+
+    <div id="container-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>Objeto da Missão</th>
+                    <th class="colunaPrazo">Prazo</th>
+                    <th>Autor</th>
+                    <!-- <th class="colunaAnexo">Anexo</th> -->
+                    <th class="colunaFeito"><span class="material-symbols-outlined">done_all</span></th>
+                </tr>
+            </thead>
+            <tbody v-for="missao, index in listaMissoes" :key="index">
+                <tr v-if="missao.destinatario == nomeMilitar">
+                    <th>{{ missao.titulo.toUpperCase() }} <br> {{ missao.descricao }}</th>
+                    <th class="colunaPrazo">{{ missao.prazo.split('-').reverse().join('/') }}</th>
+                    <th>{{ missao.patenteremetente + " " + missao.remetente.charAt(0).toUpperCase() +
+                        missao.remetente.slice(1) }}</th>
+                    <!-- <th class="colunaAnexo"><button @click="abreAnexo"><span class="material-symbols-outlined">attach_file</span></button></th> -->
+                    <th class="colunaFeito"
+                        @click="manipulaDados(missao.remetente, missao.destinatario, missao.titulo, missao.descricao, missao.prazo)">
+                        <button><span class="material-symbols-outlined">done_outline</span></button>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </template>
 
 <script lang="ts">
@@ -100,16 +104,16 @@ export default defineComponent({
             this.prazo = prazo;
         },
         async recebeMissoes() {
-            var recebeLista = await (await fetch("https://api-bd-missoes.vercel.app/missoes", { method: 'GET' })).json();
+            var recebeLista = await (await fetch("http://10.1.196.90:3000/missions", { method: 'GET' })).json();
             this.listaMissoes = recebeLista;
             return this.listaMissoes;
         },
         async retornaDados() {
-            var recebeUsuarios = await (await fetch("https://api-bd-missoes.vercel.app/usuarios", { method: 'GET' })).json();
+            var recebeUsuarios = await (await fetch("http://10.1.196.90:3000/users", { method: 'GET' })).json();
             const id = sessionStorage.getItem('id');
 
             for (let i = 0; i < recebeUsuarios.length; i++) {
-                if (id === recebeUsuarios[i]._id) {
+                if (recebeUsuarios[i].id == id) {
                     this.inicial = recebeUsuarios[i].nome[0].toUpperCase();
                     this.nomeMilitar = recebeUsuarios[i].nome;
                     this.patente = recebeUsuarios[i].patente;
@@ -148,42 +152,73 @@ h3 {
     color: $cor-primaria;
 }
 
-table {
+#container-table {
+    overflow-y: auto;
+    border-collapse: collapse;
+    height: 70vh;
     width: 80%;
     margin: auto;
-    border: 1px solid black;
-    border-radius: 8px;
-    border-spacing: 0;
     margin-top: 4rem;
-    background-color: $cor-quaternaria;
-    color: $cor-primaria;
+    border-radius: 8px;
 
-    th {
-        border-bottom: 1px solid black;
-        padding: 0.5rem;
+    &::-webkit-scrollbar {
+        height: 18px;
+        width: 5px;
+    }
 
-        button {
-            background-color: $cor-quaternaria;
-            border: none;
-            color: $cor-primaria;
-            width: 100%;
-            transition: transform 0.5s;
+    &::-webkit-scrollbar-button {
+        background-color: none !important;
+        width: 0px;
+        height: 0px;
+    }
 
-            span:hover {
-                transform: scale(1.2);
+    &::-webkit-scrollbar-track-piece {
+        background-color: #E7E7E7;
+        -webkit-border-radius: 0 8px 8px 0;
+    }
+
+    &::-webkit-scrollbar-thumb:vertical {
+        width: 3px;
+        background-color: $cor-primaria;
+        -webkit-border-radius: 8px;
+    }
+
+    scrollbar-width: thin;
+    scrollbar-color: $cor-primaria #E7E7E7;
+
+    table {
+        width: 100%;
+        border-spacing: 0;
+        background-color: $cor-quaternaria;
+        color: $cor-primaria;
+
+        th {
+            border-bottom: 1px solid black;
+            padding: 0.5rem;
+
+            button {
+                background-color: $cor-quaternaria;
+                border: none;
+                color: $cor-primaria;
+                width: 100%;
                 transition: transform 0.5s;
-                cursor: pointer;
+
+                span:hover {
+                    transition: transform 0.5s;
+                    transform: scale(1.2);
+                    cursor: pointer;
+                }
             }
         }
-    }
 
-    .colunaFeito {
-        border-left: 1px solid black;
-    }
+        .colunaFeito {
+            border-left: 1px solid black;
+        }
 
-    .colunaPrazo {
-        border-right: 1px solid black;
-        border-left: 1px solid black;
+        .colunaPrazo {
+            border-right: 1px solid black;
+            border-left: 1px solid black;
+        }
     }
 }
 </style>
